@@ -1,7 +1,6 @@
 const { user } = require('../models')
 const responseStandart = require('../helpers/response')
 const paging = require('../helpers/pagination')
-const bcrypt = require('bcryptjs')
 const joi = require('joi')
 
 module.exports = {
@@ -13,8 +12,6 @@ module.exports = {
         })
         let { value: results, error } = schema.validate(req.body)
         if (!error) {
-            const salt = bcrypt.genSaltSync(10)
-            const hashedPass = bcrypt.hashSync(results.password, salt)
             const dataUser = {
                 name: results.name,
                 email: results.email,
