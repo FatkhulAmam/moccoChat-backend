@@ -5,17 +5,20 @@ const joi = require('joi')
 
 module.exports = {
     createUser: async (req, res) => {
+        const pictures = `uploads/${req.file.filename}`
         const schema = joi.object({
+            phone: joi.string().required(),
             name: joi.string().required(),
-            email: joi.string().required(),
-            password: joi.string().required()
+            bio: joi.string().required()
         })
         let { value: results, error } = schema.validate(req.body)
+        console.log(error)
         if (!error) {
             const dataUser = {
-                name: results.name,
-                email: results.email,
-                password: hashedPass
+                telphone: results.phone,
+                user_name: results.name,
+                bio: results.bio,
+                photo: pictures
             }
             await user.create(dataUser)
             return responseStandart(res, 'create user success', {})
@@ -33,11 +36,7 @@ module.exports = {
     },
     getUser: async (req, res) => {
         const {id} = req.user
-        const results = await user.findByPk(id, {
-            attributes: {
-                exclude: ['password']
-            }
-        })
+        const results = await user.findByPk(id)
         if (results) {
             return responseStandart(res, `user with id ${id}`, {results})
         } else {
@@ -46,17 +45,15 @@ module.exports = {
     },
     updateUser: async (req, res) => {
         const {id} = req.user
-        const {name, birth_date, email, password, gender} = req.body
+        const {telephone, user_name, bio} = req.body
         const pictures = (req.file?`uploads/${req.file.filename}`:undefined)
         console.log(req.file);
         const results = await user.findByPk(id)
         if (results) {
             const data = {
-                name,
-                birth_date,
-                email,
-                password,
-                gender,
+                telephone,
+                user_name,
+                bio,
                 photo: pictures
             }
             await results.update(data)

@@ -10,9 +10,13 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(morgan('dev'))
 app.use(cors())
 
+//import middleware
+// const authMiddleware = require('./middlewares/auth')
+
 // import routes
 const userRoute = require('./routes/users')
 
+app.use('/user', userRoute)
 
 app.get('/', (req, res) => {
     res.send({
