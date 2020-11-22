@@ -14,8 +14,10 @@ app.use(cors())
 const authMiddleware = require('./middlewares/auth')
 
 // import routes
+const authRoute = require('./routes/auth')
 const userRoute = require('./routes/users')
 
+app.use('/auth', authRoute)
 app.use('/user', authMiddleware, userRoute)
 
 app.get('/', (req, res) => {
