@@ -10,6 +10,10 @@ app.use(bodyParser.urlencoded({extended: false}))
 app.use(morgan('dev'))
 app.use(cors())
 
+// import routes
+const userRoute = require('./routes/users')
+
+
 app.get('/', (req, res) => {
     res.send({
         success: true,
