@@ -11,12 +11,12 @@ app.use(morgan('dev'))
 app.use(cors())
 
 //import middleware
-// const authMiddleware = require('./middlewares/auth')
+const authMiddleware = require('./middlewares/auth')
 
 // import routes
 const userRoute = require('./routes/users')
 
-app.use('/user', userRoute)
+app.use('/user', authMiddleware, userRoute)
 
 app.get('/', (req, res) => {
     res.send({
