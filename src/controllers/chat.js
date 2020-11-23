@@ -28,7 +28,7 @@ module.exports = {
             }
         }
     },
-    getDetailChat: async (req, res) => {
+    getAllUserChat: async (req, res) => {
         const { id } = req.user
         const results = await chat.findAll({where: {sender: id}})
         if (results) {
@@ -37,4 +37,15 @@ module.exports = {
             return responseStandart(res, `id ${id} not found`, {}, 401, false)
         }
     },
+    getChatDetail: async (req, res) => {
+        const {recipients} = req.params
+        console.log(recipients);
+        const { id } = req.user
+        const results = await chat.findAll({where: {recipient: recipients, sender: id}})
+        if (results) {
+            return responseStandart(res, `all chat user with id ${recipients}`, { results })
+        } else {
+            return responseStandart(res, `id ${recipients} not found`, {}, 401, false)
+        }
+    }
 }
