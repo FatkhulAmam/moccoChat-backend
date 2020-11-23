@@ -8,19 +8,13 @@ module.exports = {
     loginUser: async (req, res) => {
         const data = await user.findOne({ where: { telphone: req.body.phone } })
         if (data !== null) {
-            console.log(data.telphone);
-            const compared = await bcrypt.compare(req.body.phone, data.telphone)
-            if (compared === true) {
-                jwt.sign({ id: data.id }, process.env.APP_KEY, (err, token) => {
-                    if (err) {
-                        return responseStandart(res, 'Error', { error: err.message }, 500, false)
-                    } else {
-                        return responseStandart(res, `Hello Readers ${data.id}`, { token })
-                    }
-                })
-            } else {
-                return responseStandart(res, 'Wrong password', {}, 400, false)
-            }
+            jwt.sign({ id: data.id }, process.env.APP_KEY, (err, token) => {
+                if (err) {
+                    return responseStandart(res, 'Error', { error: err.message }, 500, false)
+                } else {
+                    return responseStandart(res, `Hello Readers ${data.id}`, { token })
+                }
+            })
         } else {
             return responseStandart(res, 'wrong email or password', {}, 400, false)
         }

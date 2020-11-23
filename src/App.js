@@ -16,9 +16,11 @@ const authMiddleware = require('./middlewares/auth')
 // import routes
 const authRoute = require('./routes/auth')
 const userRoute = require('./routes/users')
+const userChat = require('./routes/chat')
 
 app.use('/auth', authRoute)
 app.use('/user', authMiddleware, userRoute)
+app.use('/chat', authMiddleware, userChat)
 
 app.get('/', (req, res) => {
     res.send({
