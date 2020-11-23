@@ -1,6 +1,7 @@
 const route = require('express').Router()
-const {createMessage} = require('../controllers/chat')
+const {createChat, getDetailChat} = require('../controllers/chat')
 
-route.post('/', createMessage)
+route.post('/', createChat)
+route.get('/', getDetailChat)
 
 module.exports = route
