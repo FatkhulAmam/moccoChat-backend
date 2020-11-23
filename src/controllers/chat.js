@@ -30,7 +30,11 @@ module.exports = {
     },
     getAllUserChat: async (req, res) => {
         const { id } = req.user
-        const results = await chat.findAll({where: {sender: id}})
+        const results = await chat.findAll({
+            where: {sender: id},
+            order: [
+                ['createdAt', `desc`]
+            ]})
         if (results) {
             return responseStandart(res, `all chat user with id ${id}`, { results })
         } else {
@@ -43,9 +47,19 @@ module.exports = {
         const { id } = req.user
         const results = await chat.findAll({where: {recipient: recipients, sender: id}})
         if (results) {
-            return responseStandart(res, `all chat user with id ${recipients}`, { results })
+            return responseStandart(res, `all chat user with id ${id} and recipient ${recipients}`, { results })
         } else {
-            return responseStandart(res, `id ${recipients} not found`, {}, 401, false)
+            return responseStandart(res, `user id ${id} or recipient ${recipients}`, {}, 401, false)
+        }
+    },
+    deleteMessage: async (req, res) => {
+        const { id } = req.params
+        const results = await message.findByPk(id)
+        if (results) {
+            await results.destroy()
+            return responseStandart(res, `delete message id ${id} successfully`, {})
+        } else {
+            return responseStandart(res, `message ${id} not found`, {}, 401, false)
         }
     }
 }
