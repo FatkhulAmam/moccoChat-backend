@@ -31,6 +31,9 @@ module.exports = {
     getAllUserChat: async (req, res) => {
         const { id } = req.user
         const results = await chat.findAll({
+            include: [
+                {model: user, as: 'recipientDetail'}
+            ],
             where: {sender: id},
             order: [
                 ['createdAt', `desc`]
