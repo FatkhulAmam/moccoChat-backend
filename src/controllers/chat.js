@@ -61,7 +61,17 @@ module.exports = {
             include: [
                 { model: user, as: 'recipientDetail' }
             ],
-            where: { sender: id },
+            where: {
+                [Op.and]: [
+                    {
+                        [Op.or]: [
+                            { sender: id },
+                            { recipient: id }
+                        ]
+                    },
+                    { isLates: true }
+                ]
+            },
             order: [
                 ['createdAt', `desc`]
             ]
