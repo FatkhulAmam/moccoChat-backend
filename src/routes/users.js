@@ -5,7 +5,8 @@ const {createUser, getUsers, getUser, updateUser, deleteUser} = require('../cont
 const uploadHelper = require('../helpers/upload')
 
 route.post('/', uploadHelper.single('pictures'), createUser)
-route.get('/', getUser)
+route.get('/', getUsers)
+route.get('/detail', getUser)
 route.patch('/', uploadHelper.single('pictures'), updateUser)
 route.delete('/:id', deleteUser)
 

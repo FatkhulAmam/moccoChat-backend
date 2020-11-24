@@ -2,6 +2,7 @@ const { chat, user } = require('../models')
 const responseStandart = require('../helpers/response')
 const paging = require('../helpers/pagination')
 const joi = require('joi')
+const { Op } = require("sequelize");
 
 module.exports = {
     createChat: async (req, res) => {
@@ -22,7 +23,7 @@ module.exports = {
                     recipient: results.recipient
                 }
                 const data = await chat.create(dataUser)
-                return responseStandart(res, 'message sent', {data})
+                return responseStandart(res, 'message sent', { data })
             } else {
                 return responseStandart(res, 'error', {}, 401, false)
             }
@@ -32,12 +33,13 @@ module.exports = {
         const { id } = req.user
         const results = await chat.findAll({
             include: [
-                {model: user, as: 'recipientDetail'}
+                { model: user, as: 'recipientDetail' }
             ],
-            where: {sender: id},
+            where: { sender: id },
             order: [
                 ['createdAt', `desc`]
-            ]})
+            ]
+        })
         if (results) {
             return responseStandart(res, `all chat user with id ${id}`, { results })
         } else {
@@ -45,10 +47,16 @@ module.exports = {
         }
     },
     getChatDetail: async (req, res) => {
-        const {recipients} = req.params
+        const { recipients } = req.params
         console.log(recipients);
         const { id } = req.user
-        const results = await chat.findAll({where: {recipient: recipients, sender: id}})
+        const results = await chat.findAll({
+            where: {
+                [Op.or]: [
+                    { recipient: recipients, sender: id },
+                    { recipient: id, sender: recipients }
+                ]
+            }})
         if (results) {
             return responseStandart(res, `all chat user with id ${id} and recipient ${recipients}`, { results })
         } else {
