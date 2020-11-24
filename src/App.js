@@ -25,7 +25,7 @@ app.use('/chat', authMiddleware, userChat)
 app.get('/', (req, res) => {
     res.send({
         success: true,
-        message: `backend running well on port ${APP_PORT}`
+        message: `mocco chat app backend running well on port ${APP_PORT}`
     })
 })
 
@@ -33,5 +33,5 @@ app.get('/', (req, res) => {
 app.use('/uploads', express.static('assets/uploads'))
 
 app.listen(APP_PORT, ()=>{
-    console.log(`Running on port ${APP_PORT}`)
+    console.log(`Mocco Chat App Backend Running on port ${APP_PORT}`)
 })
