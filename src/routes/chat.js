@@ -1,8 +1,8 @@
 const route = require('express').Router()
-const {createChat, getAllUserChat, getChatDetail, deleteMessage} = require('../controllers/chat')
+const {createChat, getListChat, getChatDetail, deleteMessage} = require('../controllers/chat')
 
 route.post('/', createChat)
-route.get('/', getAllUserChat)
+route.get('/', getListChat)
 route.get('/detail/:recipients', getChatDetail)
 route.delete('/:id', deleteMessage)
 

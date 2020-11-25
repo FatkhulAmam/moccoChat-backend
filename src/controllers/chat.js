@@ -12,80 +12,63 @@ module.exports = {
             recipient: joi.string().required()
         })
         let { value: results, error } = schema.validate(req.body)
-        const dbPhone = await user.findByPk(id)
-        if (parseInt(results.recipient) === dbPhone.telphone) {
-            return responseStandart(res, `cannot sent self message`, {}, 401, false)
-        } else {
-            if (!error) {
-                const { messages, recipient } = results
-                const dataUser = {
-                    sender: id,
-                    message: messages,
-                    recipient: recipient,
-                    isLates: true
-                }
-                await chat.update({ isLates: false }, {
-                    where: {
-                        [Op.and]: [{
-                            [Op.or]: [
-                                {
-                                    sender: id
-                                },
-                                {
-                                    recipient: id
-                                }
-                            ]
-                        }, {
-                            [Op.or]: [
-                                {
-                                    sender: recipient
-                                },
-                                {
-                                    recipient: recipient
-                                }
-                            ]
-                        }]
-                    }
-                })
-
-                const data = await chat.create(dataUser)
-                return responseStandart(res, 'message sent', { data })
-            } else {
-                return responseStandart(res, 'error', {}, 401, false)
+        if (!error) {
+            const { messages, recipient } = results
+            const dataUser = {
+                sender: id,
+                message: messages,
+                recipient: recipient,
+                isLates: true
             }
+            await chat.update({ isLates: false }, {
+                where: {
+                    [Op.and]: [{
+                        [Op.or]: [{ sender: id }, { recipient: id }]
+                    }, {
+                        [Op.or]: [{ sender: recipient }, { recipient: recipient }]
+                    }]
+                }
+            })
+            const data = await chat.create(dataUser)
+            return responseStandart(res, 'message sent', { data })
+        } else {
+            return responseStandart(res, 'error', {}, 401, false)
         }
     },
-    getAllUserChat: async (req, res) => {
+    getListChat: async (req, res) => {
         const { id } = req.user
+        const count = await chat.count()
+        const page = paging(req, count)
+        const { offset, pageInfo } = page
+        const { limitData: limit } = pageInfo
         const results = await chat.findAll({
             include: [
-                { model: user, as: 'recipientDetail' }
+                { model: user, as: 'recipientDetail' },
+                { model: user, as: 'senderDetail' }
             ],
+            limit, offset,
             where: {
-                [Op.and]: [
-                    {
-                        [Op.or]: [
-                            { sender: id },
-                            { recipient: id }
-                        ]
-                    },
-                    { isLates: true }
+                [Op.and]: [{
+                    [Op.or]: [{ sender: id }, { recipient: id }]
+                },
+                { isLates: true }
                 ]
             },
             order: [
                 ['createdAt', `desc`]
             ]
         })
+        console.log(count)
         if (results) {
-            return responseStandart(res, `all chat user with id ${id}`, { results })
+            return responseStandart(res, `all chat user with id ${id}`, { results, pageInfo })
         } else {
             return responseStandart(res, `id ${id} not found`, {}, 401, false)
         }
     },
     getChatDetail: async (req, res) => {
         const { recipients } = req.params
-        console.log(recipients);
         const { id } = req.user
+        console.log(recipients);
         const results = await chat.findAll({
             where: {
                 [Op.or]: [
