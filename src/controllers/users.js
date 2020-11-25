@@ -1,6 +1,6 @@
 const { user } = require('../models')
 const responseStandart = require('../helpers/response')
-const paging = require('../helpers/pagination')
+const { Op } = require("sequelize");
 const joi = require('joi')
 
 module.exports = {
@@ -27,13 +27,25 @@ module.exports = {
         }
     },
     getUsers: async (req, res) => {
-        const {id} = req.user
-        const count = await user.count()
-        const page = paging(req, count)
-        const { offset, pageInfo } = page
-        const { limitData: limit } = pageInfo
-        const result = await user.findAll()
-        return responseStandart(res, 'List all category detail', { result, pageInfo })
+        const { id } = req.user
+        const {search} = req.query
+        let searchKey = ''
+        let searchValue = ''
+        if (typeof search === 'object') {
+            searchKey = Object.keys(search)[0]
+            searchValue = Object.values(search)[0]
+        } else {
+            searchKey = 'telphone'
+            searchValue = search || ''
+        }
+        const result = await user.findAll({
+            where: {
+                [searchKey]: {
+                    [Op.substring]: `${searchValue}`
+                }
+            }
+        })
+        return responseStandart(res, 'List all category detail', { result })
     },
     getUser: async (req, res) => {
         const { id } = req.user
@@ -74,7 +86,7 @@ module.exports = {
         }
     },
     getContackDetail: async (req, res) => {
-        const {id} = req.params
+        const { id } = req.params
         const results = await user.findByPk(id)
         if (results) {
             return responseStandart(res, `contact detail with id ${id}`, { results })

@@ -11,7 +11,7 @@ module.exports = {
         let { value: results, error } = schema.validate(req.body)
         const dataLogin = await user.findOne({ where: { telphone: results.phone } })
         if (dataLogin !== null) {
-            jwt.sign({ id: dataLogin.id }, process.env.APP_KEY, (err, token) => {
+            jwt.sign({ id: dataLogin.id, isLogin: true }, process.env.APP_KEY, (err, token) => {
                 if (err) {
                     return responseStandart(res, 'Error', { error: err.message }, 500, false)
                 } else {
