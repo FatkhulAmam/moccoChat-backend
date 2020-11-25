@@ -72,5 +72,14 @@ module.exports = {
         } else {
             return responseStandart(res, `user ${id} not found`, {}, 401, false)
         }
+    },
+    getContackDetail: async (req, res) => {
+        const {id} = req.params
+        const results = await user.findByPk(id)
+        if (results) {
+            return responseStandart(res, `contact detail with id ${id}`, { results })
+        } else {
+            return responseStandart(res, `contact not found`, {}, 401, false)
+        }
     }
 }
