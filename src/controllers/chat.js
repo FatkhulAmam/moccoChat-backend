@@ -75,7 +75,10 @@ module.exports = {
                     { recipient: recipients, sender: id },
                     { recipient: id, sender: recipients }
                 ]
-            }
+            },
+            order: [
+                ['createdAt', `desc`]
+            ]
         })
         if (results) {
             return responseStandart(res, `all chat user with id ${id} and recipient ${recipients}`, { results })
