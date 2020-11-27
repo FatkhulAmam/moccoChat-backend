@@ -3,6 +3,7 @@ const responseStandart = require('../helpers/response')
 const paging = require('../helpers/pagination')
 const joi = require('joi')
 const { Op } = require("sequelize");
+const io = require('../App')
 
 module.exports = {
     createChat: async (req, res) => {
@@ -30,6 +31,7 @@ module.exports = {
                 }
             })
             const data = await chat.create(dataUser)
+            io.emit(recipient, {id, message: messages})
             return responseStandart(res, 'message sent', { data })
         } else {
             return responseStandart(res, 'error', {}, 401, false)

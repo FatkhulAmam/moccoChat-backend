@@ -4,8 +4,10 @@ const morgan = require('morgan')
 const cors = require('cors')
 
 const app = express()
+const server = require('http').createServer(app)
+const io = require('socket.io')(server, {})
+module.exports = io
 const {APP_PORT} = process.env
-
 app.use(bodyParser.urlencoded({extended: false}))
 app.use(morgan('dev'))
 app.use(cors())
@@ -32,6 +34,6 @@ app.get('/', (req, res) => {
 // provide static file(images)
 app.use('/uploads', express.static('assets/uploads'))
 
-app.listen(APP_PORT, ()=>{
+server.listen(APP_PORT, ()=>{
     console.log(`Mocco Chat App Backend Running on port ${APP_PORT}`)
 })
