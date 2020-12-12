@@ -7,12 +7,12 @@ const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server, {})
 module.exports = io
-const {APP_PORT} = process.env
-app.use(bodyParser.urlencoded({extended: false}))
+const { APP_PORT } = process.env
+app.use(bodyParser.urlencoded({ extended: false }))
 app.use(morgan('dev'))
 app.use(cors())
 
-//import middleware
+// import middleware
 const authMiddleware = require('./middlewares/auth')
 
 // import routes
@@ -25,15 +25,15 @@ app.use('/user', authMiddleware, userRoute)
 app.use('/chat', authMiddleware, userChat)
 
 app.get('/', (req, res) => {
-    res.send({
-        success: true,
-        message: `mocco chat app backend running well on port ${APP_PORT}`
-    })
+  res.send({
+    success: true,
+    message: `mocco chat app backend running well on port ${APP_PORT}`
+  })
 })
 
 // provide static file(images)
 app.use('/uploads', express.static('assets/uploads'))
 
-server.listen(APP_PORT, ()=>{
-    console.log(`Mocco Chat App Backend Running on port ${APP_PORT}`)
+server.listen(APP_PORT, () => {
+  console.log(`Mocco Chat App Backend Running on port ${APP_PORT}`)
 })

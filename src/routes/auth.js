@@ -1,5 +1,5 @@
 const route = require('express').Router()
-const {registrasiUser} = require('../controllers/auth')
+const { registrasiUser } = require('../controllers/auth')
 
 route.post('/', registrasiUser)
 

@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 const {
   Model
-} = require('sequelize');
+} = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class chat extends Model {
     /**
@@ -9,10 +9,10 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
+    static associate (models) {
       // define association here
-      chat.belongsTo(models.user, {foreignKey: 'recipient', as: 'recipientDetail'})
-      chat.belongsTo(models.user, {foreignKey: 'sender', as: 'senderDetail'})
+      chat.belongsTo(models.user, { foreignKey: 'recipient', as: 'recipientDetail' })
+      chat.belongsTo(models.user, { foreignKey: 'sender', as: 'senderDetail' })
     }
   };
   chat.init({
@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     isLates: DataTypes.BOOLEAN
   }, {
     sequelize,
-    modelName: 'chat',
-  });
-  return chat;
-};
+    modelName: 'chat'
+  })
+  return chat
+}

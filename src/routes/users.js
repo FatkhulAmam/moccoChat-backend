@@ -1,7 +1,7 @@
 const route = require('express').Router()
-const {createUser, getUsers, getUser, updateUser, deleteUser, getContackDetail} = require('../controllers/users')
+const { createUser, getUsers, getUser, updateUser, deleteUser, getContackDetail } = require('../controllers/users')
 
-//import helper
+// import helper
 const uploadHelper = require('../helpers/upload')
 
 route.post('/', uploadHelper.single('pictures'), createUser)
