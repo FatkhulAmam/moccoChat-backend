@@ -58,7 +58,7 @@ module.exports = {
   updateUser: async (req, res) => {
     const { id } = req.user
     const { telephone, user_name, bio } = req.body
-    const pictures = (req.file ? req.file.path : undefined)
+    const pictures = (req.file ? `uploads/${req.file.filename}` : undefined)
     console.log(req.file)
     const results = await user.findByPk(id)
     if (results) {
