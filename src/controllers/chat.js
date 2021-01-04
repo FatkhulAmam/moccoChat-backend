@@ -21,15 +21,21 @@ module.exports = {
         recipient: recipient,
         isLates: true
       }
-      await chat.update({ isLates: false }, {
-        where: {
-          [Op.and]: [{
-            [Op.or]: [{ sender: id }, { recipient: id }]
-          }, {
-            [Op.or]: [{ sender: recipient }, { recipient: recipient }]
-          }]
+      await chat.update(
+        { isLates: false },
+        {
+          where: {
+            [Op.and]: [
+              {
+                [Op.or]: [{ sender: id }, { recipient: id }]
+              },
+              {
+                [Op.or]: [{ sender: recipient }, { recipient: recipient }]
+              }
+            ]
+          }
         }
-      })
+      )
       const data = await chat.create(dataUser)
       io.emit(recipient, { id, message: messages })
       return responseStandart(res, 'message sent', { data })
@@ -39,7 +45,15 @@ module.exports = {
   },
   getListChat: async (req, res) => {
     const { id } = req.user
-    const count = await chat.count()
+    const dataCount = await chat.findAndCountAll({
+      where: {
+        [Op.and]: [
+          { [Op.or]: [{ sender: id }, { recipient: id }] },
+          { isLates: 1 }]
+      }
+    })
+    console.log(dataCount.count)
+    const count = dataCount.count
     const page = paging(req, count)
     const { offset, pageInfo } = page
     const { limitData: limit } = pageInfo
@@ -51,19 +65,20 @@ module.exports = {
       limit,
       offset,
       where: {
-        [Op.and]: [{
-          [Op.or]: [{ sender: id }, { recipient: id }]
-        },
-        { isLates: true }
+        [Op.and]: [
+          {
+            [Op.or]: [{ sender: id }, { recipient: id }]
+          },
+          { isLates: true }
         ]
       },
-      order: [
-        ['createdAt', 'desc']
-      ]
+      order: [['createdAt', 'desc']]
     })
-    console.log(count)
     if (results) {
-      return responseStandart(res, `all chat user with id ${id}`, { results, pageInfo })
+      return responseStandart(res, `all chat user with id ${id}`, {
+        results,
+        pageInfo
+      })
     } else {
       return responseStandart(res, `id ${id} not found`, {}, 401, false)
     }
@@ -71,7 +86,6 @@ module.exports = {
   getChatDetail: async (req, res) => {
     const { recipients } = req.params
     const { id } = req.user
-    console.log(recipients)
     const results = await chat.findAll({
       where: {
         [Op.or]: [
@@ -79,14 +93,22 @@ module.exports = {
           { recipient: id, sender: recipients }
         ]
       },
-      order: [
-        ['createdAt', 'desc']
-      ]
+      order: [['createdAt', 'desc']]
     })
     if (results) {
-      return responseStandart(res, `all chat user with id ${id} and recipient ${recipients}`, { results })
+      return responseStandart(
+        res,
+        `all chat user with id ${id} and recipient ${recipients}`,
+        { results }
+      )
     } else {
-      return responseStandart(res, `user id ${id} or recipient ${recipients}`, {}, 401, false)
+      return responseStandart(
+        res,
+        `user id ${id} or recipient ${recipients}`,
+        {},
+        401,
+        false
+      )
     }
   },
   deleteMessage: async (req, res) => {
