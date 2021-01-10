@@ -8,13 +8,13 @@ const io = require('../App')
 module.exports = {
   createChat: async (req, res) => {
     const { id } = req.user
+    const recipient = req.params.id
     const schema = joi.object({
-      messages: joi.string().required(),
-      recipient: joi.string().required()
+      messages: joi.string().required()
     })
     const { value: results, error } = schema.validate(req.body)
     if (!error) {
-      const { messages, recipient } = results
+      const { messages } = results
       const dataUser = {
         sender: id,
         message: messages,
