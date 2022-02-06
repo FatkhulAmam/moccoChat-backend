@@ -52,7 +52,6 @@ module.exports = {
           { isLates: 1 }]
       }
     })
-    console.log(dataCount.count)
     const count = dataCount.count
     const page = paging(req, count)
     const { offset, pageInfo } = page

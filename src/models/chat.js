@@ -11,12 +11,15 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      chat.belongsTo(models.user, { foreignKey: 'recipient', as: 'recipientDetail' })
+      chat.belongsTo(models.user, { foreignKey: 'sender', as: 'senderDetail' })
     }
   }
   chat.init({
     sender: DataTypes.INTEGER,
     recipient: DataTypes.INTEGER,
-    message: DataTypes.TEXT
+    message: DataTypes.TEXT,
+    isLates: DataTypes.BOOLEAN
   }, {
     sequelize,
     modelName: 'chat',
