@@ -58,7 +58,6 @@ module.exports = {
     const { id } = req.user
     const { telephone, user_name, bio, device_token } = req.body
     const pictures = (req.file ? `uploads/${req.file.filename}` : undefined)
-    console.log(req.file)
     const results = await user.findByPk(id)
     if (results) {
       const data = {

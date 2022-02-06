@@ -3,7 +3,10 @@ const responseStandart = require('../helpers/response')
 const paging = require('../helpers/pagination')
 const joi = require('joi')
 const { Op } = require('sequelize')
+const FCM = require('fcm-node')
 const io = require('../App')
+const { APP_FCM_SERVERKEY } = process.env
+const fcm = new FCM(APP_FCM_SERVERKEY)
 
 module.exports = {
   createChat: async (req, res) => {
@@ -36,6 +39,26 @@ module.exports = {
           }
         }
       )
+      const userValue = await user.findByPk(recipient)
+      console.log('user token', userValue.device_token, APP_FCM_SERVERKEY)
+      const message = {
+        to: userValue.device_token,
+        notification: {
+          title: userValue.user_name ? userValue.user_name : userValue.telphone,
+          body: messages
+        },
+        data: {
+          my_key: 'my value',
+          my_another_key: 'my another value'
+        }
+      }
+      fcm.send(message, function (err, response) {
+        if (err) {
+          console.log('Something has gone wrong!', err)
+        } else {
+          console.log('Successfully sent with response: ', response)
+        }
+      })
       const data = await chat.create(dataUser)
       io.emit(recipient, { id, message: messages })
       return responseStandart(res, 'message sent', { data })
@@ -73,6 +96,7 @@ module.exports = {
       },
       order: [['createdAt', 'desc']]
     })
+    console.log('RESULT', results)
     if (results) {
       return responseStandart(res, `all chat user with id ${id}`, {
         results,
