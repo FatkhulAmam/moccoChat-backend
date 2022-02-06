@@ -12,7 +12,6 @@ module.exports = {
       bio: joi.string().required()
     })
     const { value: results, error } = schema.validate(req.body)
-    console.log(error)
     if (!error) {
       const dataUser = {
         telphone: results.phone,
@@ -23,7 +22,7 @@ module.exports = {
       await user.create(dataUser)
       return responseStandart(res, 'create user success', {})
     } else {
-      return responseStandart(res, 'error', {}, 401, false)
+      return responseStandart(res, 'error', {}, 500, false)
     }
   },
   getUsers: async (req, res) => {
@@ -57,7 +56,7 @@ module.exports = {
   },
   updateUser: async (req, res) => {
     const { id } = req.user
-    const { telephone, user_name, bio } = req.body
+    const { telephone, user_name, bio, device_token } = req.body
     const pictures = (req.file ? `uploads/${req.file.filename}` : undefined)
     console.log(req.file)
     const results = await user.findByPk(id)
@@ -66,7 +65,8 @@ module.exports = {
         telephone,
         user_name,
         bio,
-        photo: pictures
+        photo: pictures,
+        device_token
       }
       await results.update(data)
       return responseStandart(res, 'update successfully', { results })
